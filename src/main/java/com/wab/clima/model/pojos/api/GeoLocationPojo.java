@@ -15,9 +15,9 @@ public class GeoLocationPojo {
 	@JsonProperty
 	private String name;
 	@JsonProperty
-	private int lat;
+	private double lat;
 	@JsonProperty
-	private int lon;
+	private double lon;
 	@JsonProperty
 	private String country;
 	@JsonProperty
@@ -31,19 +31,19 @@ public class GeoLocationPojo {
 		this.name = name;
 	}
 
-	public int getLat() {
+	public double getLat() {
 		return lat;
 	}
 
-	public void setLat(int lat) {
+	public void setLat(double lat) {
 		this.lat = lat;
 	}
 
-	public int getLon() {
+	public double getLon() {
 		return lon;
 	}
 
-	public void setLon(int lon) {
+	public void setLon(double lon) {
 		this.lon = lon;
 	}
 

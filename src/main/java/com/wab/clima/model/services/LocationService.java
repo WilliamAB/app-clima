@@ -8,15 +8,16 @@ import okhttp3.ResponseBody;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.CollectionType;
+import com.wab.clima.model.entities.Location;
 import com.wab.clima.model.pojos.api.GeoLocationPojo;
-import com.wab.clima.model.pojos.LocationPojo;
+import com.wab.clima.model.repositories.LocationRepository;
 
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -33,6 +34,9 @@ public class LocationService {
 	private String appid;
 	@Value("${app.clima.openweather.apigeo.url}")
 	private String urlApiGeo;
+
+	@Autowired
+	private LocationRepository locationRepository;
 
 	/**
 	 * Busca informações mais detalhadas de geolocalização de uma cidade.
@@ -72,35 +76,44 @@ public class LocationService {
 	 * @param state o nome do estado
 	 * @return o pojo com os dados da localização
 	 */
-	public LocationPojo findLocation(String city, String state) {
+	public Location findLocation(String city, String state) {
 
 		if (city == null) {
 			return null;
 		}
 
-		Optional<GeoLocationPojo> optGeoLocation = findGeoLocations(city).stream()
+		Location locationEntity = locationRepository.findByCityAndState(city, state);
+
+		if (locationEntity != null) {
+			return locationEntity;
+		}
+
+		GeoLocationPojo geoLocationPojo = findLocationInApiGeo(city, state);
+
+		if (geoLocationPojo != null) {
+
+			locationEntity = new Location();
+
+			locationEntity.setCity(geoLocationPojo.getName());
+			locationEntity.setState(geoLocationPojo.getState());
+			locationEntity.setCountry(geoLocationPojo.getCountry());
+			locationEntity.setLatitude(geoLocationPojo.getLat());
+			locationEntity.setLongitude(geoLocationPojo.getLon());
+
+			return locationRepository.save(locationEntity);
+		}
+
+		return null;
+	}
+
+	private GeoLocationPojo findLocationInApiGeo(String city, String state) {
+		return findGeoLocations(city).stream()
 				.filter(l -> {
 					return Objects.equals(city, l.getName())
 							&& (state == null
 							|| state.isBlank()
 							|| Objects.equals(state, l.getState()));
-				}).findFirst();
-
-		if (optGeoLocation.isPresent()) {
-			GeoLocationPojo geoLocation = optGeoLocation.get();
-
-			String locationFmt = "%s, %s - %s".formatted(geoLocation.getName(), geoLocation.getState(), geoLocation.getCountry());
-
-			LocationPojo location = new LocationPojo();
-
-			location.setLocation(locationFmt);
-			location.setLatitude(geoLocation.getLat());
-			location.setLongitude(geoLocation.getLon());
-
-			return location;
-		}
-
-		return null;
+				}).findFirst().orElse(null);
 	}
 
 }
