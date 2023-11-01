@@ -1,5 +1,7 @@
 package com.wab.clima.controller;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 import com.wab.clima.model.entities.WeatherHistory;
 import com.wab.clima.model.pojos.ResponsePageablePojo;
 import com.wab.clima.model.pojos.WeatherPojo;
@@ -26,6 +28,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @author William Alberto Bertoldi (william.bertoldi@gmail.com)
  *
  */
+@Tag(name = "weather")
 @RestController
 @RequestMapping(path = "/weather")
 public class WeatherController {
