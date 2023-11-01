@@ -18,6 +18,7 @@ A documentação completa com os endpoints, parâmetros e métodos (GET, POST, D
     - Usuário do banco de dados: `spring.datasource.username=postgres`
     - Senha do usuário do banco: `spring.datasource.password=senha`
     - Dialeto do banco de dados (conforme banco instalado): `spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect`
+    - Chave da API: `app.clima.openweather.appid=chave`
 - Executar a aplicação a partir do seguinte comando dentro do diretório clonado:
   `mvnw spring-boot:run`
 - Acesse [http://localhost:8080/swagger-ui/index.html](http://localhost:8080/swagger-ui/index.html) para consultar a documentação da API e poder realizar os testes de requisições.
